@@ -1,1 +1,4 @@
 *.cpython*
+
+/datasets/tfrecords
+/dev_data
