@@ -16,6 +16,10 @@ def parse_tfrecords(fileList, batch_size):
                                                     'data':  tf.compat.v1.FixedLenFeature([], tf.string),                
                                                     'label': tf.compat.v1.FixedLenFeature([], tf.int64)
                                                 })
+
+    # TODO: Know what features are like
+    print(features)
+
     data = tf.compat.v1.decode_raw(features['data'], tf.float32)
     data = tf.reshape(data, (313*128,))
     # data = tf.expand_dims(data, axis=0)
@@ -32,7 +36,7 @@ def parse_tfrecords(fileList, batch_size):
 
 if __name__ == "__main__":
     tf.compat.v1.disable_eager_execution()
-    tfDirs = r"E:\project\anormal\C2AE\tfrecords"
+    tfDirs = r'./datasets/tfrecords'
     fileList = glob.glob(os.path.join(tfDirs, "*.tfrecord"))
     data_b, label_b = parse_tfrecords(fileList, 4)
     label_bb = tf.cast(label_b, tf.int32)

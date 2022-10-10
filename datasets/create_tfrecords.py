@@ -52,6 +52,9 @@ def file_to_vector_array(file_name,
     # 03 convert melspectrogram to log mel energy
     # log_mel_spectrogram = 20.0 / power * np.math.log10(mel_spectrogram + sys.float_info.epsilon)
     log_mel_spectrogram = librosa.power_to_db(mel_spectrogram)
+    #print(log_mel_spectrogram.shape)
+    #print(log_mel_spectrogram)
+    
     # 04 calculate total vector size
     # vector_array_size = len(log_mel_spectrogram[0, :]) - frames + 1
 
@@ -74,6 +77,8 @@ def convert_to_tfrecords(fDict, saveDirs):
         fileList = fDict[typeID]
         filename = "Machine" + typeID + "_" + str(len(fileList)) + ".tfrecord"
         output_filename = os.path.join(saveDirs, filename)
+
+        #print(output_filename)
         writer = tf.compat.v1.python_io.TFRecordWriter(output_filename)
         for eachFile in fileList:
             data = file_to_vector_array(eachFile, n_mels=128)
@@ -94,8 +99,8 @@ def convert_to_tfrecords(fDict, saveDirs):
 
 
 if __name__ == "__main__":
-    fileDirs = r"E:\project\anormal\dcase2020_task2_baseline\dev_data\fan\train"
-    saveDirs = "./tfrecords"
+    fileDirs = "/mnt/Directory/CONDITIONED-AUTO-ENCODER/dev_train/fan"
+    saveDirs = "/mnt/Directory/CONDITIONED-AUTO-ENCODER/tfrecords"
     fDict = load_files_info(fileDirs)
     convert_to_tfrecords(fDict, saveDirs)
     print("-------")

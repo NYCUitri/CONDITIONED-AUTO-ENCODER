@@ -1,4 +1,7 @@
 *.cpython*
 
 /datasets/tfrecords
+/tfrecords
 /dev_data
+/log
+/checkpoint

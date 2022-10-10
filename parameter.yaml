@@ -1,7 +1,8 @@
 batch_size: 32
 learning_rate: 0.01
 checkpoint: './checkpoint'
-dataDir: 'E:\\project\\anormal\\dcase2020_task2_baseline\\dev_data\\fan\\train'
+dataDir: './dev_data/fan/train'
+tfDir: './tfrecords'
 log: './log'
 trainNum: 1000
 frameNums: 313

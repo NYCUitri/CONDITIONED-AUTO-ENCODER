@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 import glob
 import tensorflow as tf  
 import numpy as np
 import yaml
-from datasets import create_dataset
+from datasets import create_dataset, create_tfrecords
 from nets import model
 import time
 
@@ -18,12 +20,30 @@ def yaml_load():
 
 def main():
     param = yaml_load()
-    #01:load train data 
+
     dataDir = param['dataDir']
-    fileList = glob.glob(os.path.join(dataDir, "*.tfrecord"))
+    #00: Create train data
+    '''
+    saveDirs = "./tfrecords"
+    fDict = create_tfrecords.load_files_info(dataDir)
+    create_tfrecords.convert_to_tfrecords(fDict, saveDirs)
+    print("-------")
+    '''
+
+    #01:load train data 
+    tfDir = param['tfDir']
+    fileList = glob.glob(os.path.join(tfDir, "*.tfrecord"))
+    
+    # TODO: Show file list
+    #print(fileList)
 
     data_train, label_batch = create_dataset.parse_tfrecords(fileList, param['batch_size'])
+
+    # TODO: show data and label
+    #print(data_train.shape)
+    #print(label_batch.shape)
     label_int32 = tf.cast(label_batch, tf.int32)
+
     mostIndex = tf.argmax(tf.compat.v1.bincount(label_int32))
     mostValue = tf.gather(label_int32, mostIndex)
     label_float32 = tf.cast(tf.equal(label_int32, mostValue), tf.float32)
@@ -32,8 +52,12 @@ def main():
     data_train = tf.cast(data_train, tf.float32)
     label_train = tf.cast(label_train, tf.float32)
     #02:build model
-    ypred, logits = model.build_model(data_train, label_train, True, None, param['frameNums'], param['mels'])
-    loss, accuracy = model.calu_loss(data_train, label_train, ypred, 5, 0.75, label_batch, logits)
+    #ypred, logits = model.build_model(data_train, label_train, True, None, param['frameNums'], param['mels'])
+    #loss, accuracy = model.calu_loss(data_train, label_train, ypred, 5, 0.75, label_batch, logits)
+
+    ypred = model.build_model(data_train, label_train, True, None, param['frameNums'], param['mels'])
+    loss = model.calu_loss(data_train, label_train, ypred, 5, 0.75)
+
     #03:train model
     train_step = param['trainNum'] // param['batch_size']
     tf.summary.scalar('train/loss', loss)
@@ -72,14 +96,15 @@ def main():
             train_acc = 0
             if epoch + 1 == 1 or (epoch + 1) % 10 == 0:
                 for step in range(train_step):
-                    err, acc, train_summary = sess.run([loss, accuracy, merged])
+                    #err, acc, train_summary = sess.run([loss, accuracy, merged])
+                    err, train_summary = sess.run([loss, merged])
                     train_loss += err   
                     n_batch += 1
-                    train_acc += acc
+                    #train_acc += acc
                 summary_writer.add_summary(train_summary, epoch + 1)
                 print("Epoch %d of %d took %fs" % (epoch + 1, param['epochs'], time.time() - start_time))
                 print("   train loss:%f" % (train_loss / n_batch))
-                print("   train acc:%f" % (train_acc / n_batch))
+                #print("   train acc:%f" % (train_acc / n_batch))
             
                 model_path = os.path.join(param['checkpoint'], param['model_name'])
                 save_path = saver.save(sess, model_path, global_step=global_step)
