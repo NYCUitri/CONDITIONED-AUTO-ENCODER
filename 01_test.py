@@ -34,14 +34,12 @@ def main(testDir):
         # FIXME: c2ae.ckpt-12500(no file) -> c2ae.ckpt-12400
         # model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12500')
         model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12400')
-        print("model_path: ", model_path)
         saver.restore(sess, model_path)
         print('Load Model Params Sucess...')
         
         fileList = glob.glob(os.path.join(testDir, "*.wav"))
         y_true = []
         y_pred = []
-        print("file list: ", fileList, testDir)
         for eachFile in tqdm(fileList):
             fileName = os.path.basename(eachFile)
             if "anomaly" in eachFile:
@@ -87,6 +85,7 @@ def main(testDir):
     
     auc = metrics.roc_auc_score(y_true, y_pred)
     print("AUC:%.2f"%(auc))
+    plt.clf()
     plt.figure(0)
     plt.subplot(211)
     plt.plot(y_true, 'r*')
