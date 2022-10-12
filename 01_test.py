@@ -60,6 +60,8 @@ def main(testDir):
             feed_dict = {x:dataTest, y:labelTest}
             dataP = sess.run([dataPred], feed_dict=feed_dict)
             dataP = np.squeeze(dataP[0])
+
+            errors = abs(dataNormalize - dataP)
             err = np.mean(abs(dataNormalize - dataP))
             y_pred.append(err)
             
@@ -78,7 +80,7 @@ def main(testDir):
             # plt.axis('off')
 
             plt.subplot(313)
-            plt.imshow(abs(dataP - dataNormalize)) 
+            plt.imshow(errors) 
             plt.title(str(err))
             plt.show()
 
