@@ -71,7 +71,6 @@ def file_to_vector_array(file_name,
 
 
 def convert_to_tfrecords(fDict, saveDirs):
-    
     for idx, typeID in enumerate(sorted(fDict.keys())):
         
         fileList = fDict[typeID]
@@ -99,7 +98,7 @@ def convert_to_tfrecords(fDict, saveDirs):
 
 
 if __name__ == "__main__":
-    fileDirs = "/mnt/Directory/CONDITIONED-AUTO-ENCODER/dev_train/fan"
+    fileDirs = "/mnt/Directory/CONDITIONED-AUTO-ENCODER/dev_data/fan/train"
     saveDirs = "/mnt/Directory/CONDITIONED-AUTO-ENCODER/tfrecords"
     fDict = load_files_info(fileDirs)
     convert_to_tfrecords(fDict, saveDirs)

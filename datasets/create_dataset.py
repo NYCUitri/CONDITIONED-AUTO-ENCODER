@@ -18,7 +18,7 @@ def parse_tfrecords(fileList, batch_size):
                                                 })
 
     # TODO: Know what features are like
-    print(features)
+    #print(features)
 
     data = tf.compat.v1.decode_raw(features['data'], tf.float32)
     data = tf.reshape(data, (313*128,))
@@ -36,7 +36,7 @@ def parse_tfrecords(fileList, batch_size):
 
 if __name__ == "__main__":
     tf.compat.v1.disable_eager_execution()
-    tfDirs = r'./datasets/tfrecords'
+    tfDirs = r'./tfrecords'
     fileList = glob.glob(os.path.join(tfDirs, "*.tfrecord"))
     data_b, label_b = parse_tfrecords(fileList, 4)
     label_bb = tf.cast(label_b, tf.int32)
