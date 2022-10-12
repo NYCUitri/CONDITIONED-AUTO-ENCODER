@@ -31,7 +31,7 @@ def main(testDir):
     saver = tf.compat.v1.train.Saver()
     with tf.compat.v1.Session() as sess:
         sess.run(tf.compat.v1.global_variables_initializer())
-        model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12500')
+        model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12400')
         saver.restore(sess, model_path)
         print('Load Model Params Sucess...')
         
@@ -103,5 +103,5 @@ def main(testDir):
 
 if __name__=="__main__":
     tf.compat.v1.disable_eager_execution()
-    testDir = r"E:\project\anormal\dcase2020_task2_baseline\dev_data\fan\test"
+    testDir = '/mnt/Directory/CONDITIONED-AUTO-ENCODER/dev_data/fan/test'
     main(testDir)
