@@ -26,11 +26,13 @@ def main(testDir):
 
     x = tf.compat.v1.placeholder(tf.float32, [1, param['frameNums']*param['mels']])
     y = tf.compat.v1.placeholder(tf.float32,[1,1])
-    dataPred, _ = model.build_model(x, y, False, None, param['frameNums'], param['mels'])
+    dataPred = model.build_model(x, y, False, None, param['frameNums'], param['mels'])
 
     saver = tf.compat.v1.train.Saver()
     with tf.compat.v1.Session() as sess:
         sess.run(tf.compat.v1.global_variables_initializer())
+        # FIXME: c2ae.ckpt-12500(no file) -> c2ae.ckpt-12400
+        # model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12500')
         model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12400')
         saver.restore(sess, model_path)
         print('Load Model Params Sucess...')
@@ -62,27 +64,28 @@ def main(testDir):
             y_pred.append(err)
             
             #plot
-            # dataNormalize = np.reshape(dataNormalize, [128,313])
-            # dataP = np.reshape(dataP, [128,313])
+            dataNormalize = np.reshape(dataNormalize, [128,313])
+            dataP = np.reshape(dataP, [128,313])
             
-            # plt.figure(0)
-            # plt.subplot(311)
-            # plt.imshow(dataNormalize)
-            # plt.title(fileName)
-            # # plt.axis('off')
+            plt.figure(0)
+            plt.subplot(311)
+            plt.imshow(dataNormalize)
+            plt.title(fileName)
+            # plt.axis('off')
 
-            # plt.subplot(312)
-            # plt.imshow(dataP)
-            # # plt.axis('off')
+            plt.subplot(312)
+            plt.imshow(dataP)
+            # plt.axis('off')
 
-            # plt.subplot(313)
-            # plt.imshow(abs(dataP - dataNormalize)) 
-            # plt.title(str(err))
-            # plt.show()
+            plt.subplot(313)
+            plt.imshow(abs(dataP - dataNormalize)) 
+            plt.title(str(err))
+            plt.show()
 
     
     auc = metrics.roc_auc_score(y_true, y_pred)
     print("AUC:%.2f"%(auc))
+    plt.clf()
     plt.figure(0)
     plt.subplot(211)
     plt.plot(y_true, 'r*')
@@ -103,5 +106,5 @@ def main(testDir):
 
 if __name__=="__main__":
     tf.compat.v1.disable_eager_execution()
-    testDir = '/mnt/Directory/CONDITIONED-AUTO-ENCODER/dev_data/fan/test'
+    testDir = r"./dev_data/fan/test"
     main(testDir)
