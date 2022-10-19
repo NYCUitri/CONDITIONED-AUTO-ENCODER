@@ -86,6 +86,7 @@ def main():
         threads = tf.compat.v1.train.start_queue_runners(sess=sess, coord=coord)
         print('Start training...')
 
+        loss_list = []
         for epoch in range(param['epochs']):
             start_time = time.time()
             for step in range(train_step):
@@ -94,21 +95,35 @@ def main():
             train_loss = 0
             n_batch = 0
             train_acc = 0
-            if epoch + 1 == 1 or (epoch + 1) % 10 == 0:
-                for step in range(train_step):
-                    #err, acc, train_summary = sess.run([loss, accuracy, merged])
-                    err, train_summary = sess.run([loss, merged])
-                    train_loss += err   
-                    n_batch += 1
-                    #train_acc += acc
-                summary_writer.add_summary(train_summary, epoch + 1)
-                print("Epoch %d of %d took %fs" % (epoch + 1, param['epochs'], time.time() - start_time))
-                print("   train loss:%f" % (train_loss / n_batch))
-                #print("   train acc:%f" % (train_acc / n_batch))
+            #if epoch + 1 == 1 or (epoch + 1) % 10 == 0:
+            for step in range(train_step):
+                #err, acc, train_summary = sess.run([loss, accuracy, merged])
+                err, train_summary = sess.run([loss, merged])
+                train_loss += err   
+                n_batch += 1
+                #train_acc += acc
+            summary_writer.add_summary(train_summary, epoch + 1)
+            #print("Epoch %d of %d took %fs" % (epoch + 1, param['epochs'], time.time() - start_time))
+            #print("   train loss:%f" % (train_loss / n_batch))
+
+            loss_list.append(train_loss / n_batch)
+            #print("   train acc:%f" % (train_acc / n_batch))
             
+            if epoch + 1 == 1 or (epoch + 1) % 40 == 0:
                 model_path = os.path.join(param['checkpoint'], param['model_name'])
                 save_path = saver.save(sess, model_path, global_step=global_step)
                 print("Model saved in file: ", save_path)
+
+        import matplotlib.pyplot as plt
+        fig = plt.figure(figsize=(30, 10))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.cla()
+        ax.plot(loss_list)
+        ax.set_title("Model loss")
+        ax.set_xlabel("Epoch")
+        ax.set_ylabel("Loss")
+        ax.legend(["Train"], loc="upper right")
+        plt.savefig("learning_curve.png")
 
         summary_writer.close()
         coord.request_stop()

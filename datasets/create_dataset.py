@@ -21,9 +21,15 @@ def parse_tfrecords(fileList, batch_size):
     #print(features)
 
     data = tf.compat.v1.decode_raw(features['data'], tf.float32)
+    
+    # TODO: Try to know what data and label looks like
+    #print(data.shape)
+    #print(data)
     data = tf.reshape(data, (313*128,))
     # data = tf.expand_dims(data, axis=0)
     label = features['label']
+    print(label.shape)
+    print(label)
     # label = tf.expand_dims(label, axis=0)
     
     data_batch, label_batch = tf.compat.v1.train.shuffle_batch([data, label],
@@ -36,7 +42,7 @@ def parse_tfrecords(fileList, batch_size):
 
 if __name__ == "__main__":
     tf.compat.v1.disable_eager_execution()
-    tfDirs = r'./tfrecords'
+    tfDirs = '/mnt/Directory/CONDITIONED-AUTO-ENCODER/tfrecords'
     fileList = glob.glob(os.path.join(tfDirs, "*.tfrecord"))
     data_b, label_b = parse_tfrecords(fileList, 4)
     label_bb = tf.cast(label_b, tf.int32)

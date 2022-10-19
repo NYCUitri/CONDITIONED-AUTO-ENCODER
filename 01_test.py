@@ -33,7 +33,7 @@ def main(testDir):
         sess.run(tf.compat.v1.global_variables_initializer())
         # FIXME: c2ae.ckpt-12500(no file) -> c2ae.ckpt-12400
         # model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12500')
-        model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-12400')
+        model_path = os.path.join(param['checkpoint'], 'c2ae.ckpt-6200')
         saver.restore(sess, model_path)
         print('Load Model Params Sucess...')
         
@@ -61,7 +61,6 @@ def main(testDir):
             dataP = sess.run([dataPred], feed_dict=feed_dict)
             dataP = np.squeeze(dataP[0])
 
-            errors = abs(dataNormalize - dataP)
             err = np.mean(abs(dataNormalize - dataP))
             y_pred.append(err)
             
@@ -80,7 +79,7 @@ def main(testDir):
             # plt.axis('off')
 
             plt.subplot(313)
-            plt.imshow(errors) 
+            plt.imshow(abs(dataNormalize - dataP)) 
             plt.title(str(err))
             plt.show()
 
